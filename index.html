@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manajemen Kelas - PAI</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        primary: { 50: '#f0f9ff', 100: '#e0f2fe', 500: '#0ea5e9', 600: '#0284c7', 700: '#0369a1' },
+                        secondary: { 800: '#1e293b' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        .glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+        .fade-in { animation: fadeIn 0.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 h-screen flex flex-col overflow-hidden font-sans">
+
+    <div id="login-screen" class="fixed inset-0 z-[100] bg-slate-900 flex flex-col items-center justify-center p-4 transition-all duration-500">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md text-center fade-in">
+            <div class="mb-6 inline-flex p-4 bg-primary-50 rounded-full text-primary-600">
+                <i class="fa-solid fa-school text-3xl"></i>
+            </div>
+            <h1 class="text-2xl font-bold text-slate-800 mb-2">Manajemen Kelas</h1>
+            <p class="text-slate-500 mb-8 font-bold text-sm">Pendidikan Agama Islam dan Budi Pekerti</p>
+
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <label class="cursor-pointer">
+                    <input type="radio" name="storage-mode" value="local" checked class="peer hidden" onchange="Auth.toggleInputs()">
+                    <div class="p-4 rounded-xl border-2 border-slate-200 peer-checked:border-primary-500 peer-checked:bg-primary-50 transition text-center group">
+                        <i class="fa-solid fa-hard-drive text-2xl mb-2 text-slate-400 group-peer-checked:text-primary-600"></i>
+                        <div class="text-sm font-bold text-slate-600">Lokal</div>
+                        <div class="text-[8px] text-slate-400">(data akan disimpan di perangkat ini)</div>
+                    </div>
+                </label>
+                <label class="cursor-pointer">
+                    <input type="radio" name="storage-mode" value="cloud" class="peer hidden" onchange="Auth.toggleInputs()">
+                    <div class="p-4 rounded-xl border-2 border-slate-200 peer-checked:border-primary-500 peer-checked:bg-primary-50 transition text-center group">
+                        <i class="fa-solid fa-cloud text-2xl mb-2 text-slate-400 group-peer-checked:text-primary-600"></i>
+                        <div class="text-sm font-bold text-slate-600">Cloud</div>
+                        <div class="text-[8px] text-slate-400">(data akan tersimpan di Jsonbin.io)</div>
+                    </div>
+                </label>
+            </div>
+
+            <div class="space-y-4 text-center">
+                <div>
+                    <label class="text-xs font-normal text-slate-500 ml-1">Silakan masukkan kode akses:</label>
+                    <input type="password" id="login-code" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-4 py-3 text-center text-m tracking-widest outline-none focus:ring-2 focus:ring-primary-500 transition" placeholder="•••••">
+                </div>
+
+                <div id="cloud-inputs" class="hidden space-y-3 pt-2 mt-2 border-slate-100">
+                    <div class="text-xs text-center text-amber-600 bg-amber-50 p-2 rounded">• pastikan perangkat terhubung ke jaringan internet •</div>
+                    </div>
+            </div>
+
+            <button onclick="Auth.login()" class="w-full bg-primary-600 hover:bg-primary-700 text-white py-3.5 rounded-xl font-bold shadow-lg shadow-primary-500/30 mt-2 transition-all transform hover:scale-[1.02]">
+                Masuk</button>
+        </div>
+        <p class="text-slate-500 text-xs mt-4 text-center">Dibuat oleh:<br><b>Dede Ardi Hikmatulloh, S.Th.I</b><br>© 2025 - Portal PAI Dasar</p>
+    </div>
+
+    <div id="loading-overlay" class="hidden fixed inset-0 z-[250] bg-white/80 backdrop-blur-sm flex items-center justify-center">
+        <div class="text-center">
+            <div class="animate-spin rounded-full h-12 w-12 border-4 border-primary-200 border-t-primary-600 mx-auto mb-3"></div>
+            <p class="text-primary-700 font-bold animate-pulse" id="loading-text">Memuat...</p>
+        </div>
+    </div>
+
+    <div id="main-app" class="hidden flex flex-col h-full">
+        <nav class="glass border-b border-slate-200 z-40 sticky top-0">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16 items-center">
+                    <div class="flex items-center gap-3">
+                        <div class="bg-primary-600 text-white w-9 h-9 rounded-lg flex items-center justify-center shadow-md">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-lg font-bold text-slate-800 leading-none">Pendidikan Agama Islam dan Budi Pekerti</h1>
+                            <span id="storage-indicator" class="text-[10px] font-bold uppercase tracking-wider text-primary-600 bg-primary-50 px-2 py-0.5 rounded-full">Local Mode</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-3">
+                        <span id="clock" class="hidden md:block text-xs font-mono text-slate-500 bg-slate-100 px-3 py-1.5 rounded-md border border-slate-200"></span>
+                        <button onclick="Auth.logout()" class="text-slate-500 hover:text-red-600 bg-slate-50 hover:bg-red-50 border border-slate-200 px-3 py-1.5 rounded-lg text-sm font-medium transition flex items-center gap-2">
+                            <i class="fa-solid fa-power-off"></i> Keluar
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="flex space-x-6 overflow-x-auto no-scrollbar -mb-px">
+                    <button onclick="App.switchTab('dashboard')" id="nav-dashboard" class="tab-btn active border-b-2 border-primary-600 text-primary-600 px-1 py-3 text-sm font-semibold whitespace-nowrap"><i class="fa-solid fa-chart-pie mr-2"></i>Beranda</button>
+                    <button onclick="App.switchTab('kelas')" id="nav-kelas" class="tab-btn border-b-2 border-transparent text-slate-500 hover:text-slate-700 px-1 py-3 text-sm font-medium whitespace-nowrap"><i class="fa-solid fa-chalkboard-user mr-2"></i>Kelas</button>
+                    <button onclick="App.switchTab('kehadiran')" id="nav-kehadiran" class="tab-btn border-b-2 border-transparent text-slate-500 hover:text-slate-700 px-1 py-3 text-sm font-medium whitespace-nowrap"><i class="fa-solid fa-calendar-check mr-2"></i>Absensi</button>
+                    <button onclick="App.switchTab('nilai')" id="nav-nilai" class="tab-btn border-b-2 border-transparent text-slate-500 hover:text-slate-700 px-1 py-3 text-sm font-medium whitespace-nowrap"><i class="fa-solid fa-star mr-2"></i>Nilai</button>
+                    <button onclick="App.switchTab('rekap')" id="nav-rekap" class="tab-btn border-b-2 border-transparent text-slate-500 hover:text-slate-700 px-1 py-3 text-sm font-medium whitespace-nowrap"><i class="fa-solid fa-file-export mr-2"></i>Rekapitulasi</button>
+                </div>
+            </div>
+        </nav>
+
+        <main class="flex-1 overflow-y-auto bg-slate-50 p-4 sm:p-6 lg:p-8 relative">
+            
+            <div id="view-dashboard" class="view-section fade-in">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xl"><i class="fa-solid fa-school"></i></div>
+                        <div><p class="text-slate-500 text-xs capitalize font-bold">Total Kelas:</p><h3 class="text-2xl font-bold text-slate-800" id="dash-kelas">0</h3></div>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xl"><i class="fa-solid fa-users"></i></div>
+                        <div><p class="text-slate-500 text-xs capitalize font-bold">Total Siswa:</p><h3 class="text-2xl font-bold text-slate-800" id="dash-siswa">0</h3></div>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center text-xl"><i class="fa-solid fa-clipboard-check"></i></div>
+                        <div><p class="text-slate-500 text-xs capitalize font-bold">Absensi Terbaru:</p><h3 class="text-2xl font-bold text-slate-800" id="dash-hadir">0</h3></div>
+                    </div>
+                </div>
+               
+			    <div class="bg-gradient-to-r from-primary-600 to-blue-700 rounded-2xl p-8 text-white shadow-xl">
+                    <h2 class="text-2xl font-bold mb-2">Selamat datang, Guru Hebat!</h2>
+                    <p class="text-blue-100 mb-6 max-w-lg">Jika sistem diakses dengan menggunakan <span id="dash-mode-text" class="font-bold">penyimpanan lokal</span>,<br> pastikan data tersinkronisasi secara berkala.</p>
+                    <button onclick="App.switchTab('kelas')" class="bg-white text-primary-700 px-5 py-2.5 rounded-lg font-bold text-sm shadow hover:bg-slate-100 transition">Mulai</button>
+                </div>
+            </div>
+
+            <div id="view-kelas" class="view-section hidden fade-in space-y-6">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-xl font-bold text-slate-800">Daftar Kelas:</h2>
+                    <button onclick="Security.verifyAction(UI.showAddClassModal)" class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg shadow-lg shadow-primary-500/30 flex items-center gap-2 text-sm font-medium">
+                        <i class="fa-solid fa-plus"></i> Tambah Kelas</button>
+                </div>
+               
+			   <div id="class-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+                
+                <div id="student-management" class="hidden bg-white rounded-2xl shadow-sm border border-slate-100 p-6 relative">
+                    <button onclick="UI.closeStudentManagement()" class="absolute top-0 right-2 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-times text-xl"></i></button>
+                    <div class="flex justify-between items-center mb-6 border-b pb-4">
+                        <div>
+                            <h3 class="font-bold text-lg text-slate-800" id="manage-title">Kelas X</h3>
+                            <p class="text-slate-500 text-sm">Silakan kelola (impor, tambah, atau hapus) data siswa di sini:</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="Security.verifyAction(UI.showBulkAddStudentModal)" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-lg shadow-indigo-500/30">
+                                <i class="fa-solid fa-file-import mr-1"></i> Impor Data Siswa
+                            </button>
+                            <button onclick="Security.verifyAction(UI.showAddStudentModal)" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-lg shadow-emerald-500/30">
+                                <i class="fa-solid fa-user-plus mr-1"></i> Tambah Data Siswa
+                            </button>
+                        </div>
+                    </div>
+                    <table class="w-full text-sm text-left"><tbody id="student-list" class="divide-y divide-slate-100"></tbody></table>
+                </div>
+            </div>
+
+            <div id="view-kehadiran" class="view-section hidden fade-in">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                        <select id="att-class" onchange="UI.loadAttForm()" class="bg-slate-50 border border-slate-200 rounded-lg p-2.5 outline-none"><option value="">Pilih Kelas</option></select>
+                        <input type="date" id="att-date" onchange="UI.loadAttForm()" class="bg-slate-50 border border-slate-200 rounded-lg p-2.5 outline-none">
+                    </div>
+                    <div id="att-form" class="hidden">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-bold text-slate-700">Input Absensi</h3>
+                            <button onclick="Security.verifyAction(Data.saveAttendance)" class="bg-primary-600 text-white px-6 py-2 rounded-lg shadow font-medium"><i class="fa-solid fa-save mr-2"></i>Simpan</button>
+                        </div>
+                        <div id="att-list" class="space-y-2"></div>
+                    </div>
+                    <div id="att-empty" class="text-center py-12 text-slate-400"><i class="fa-solid fa-calendar-days text-4xl mb-3"></i><p>• pilih kelas dan tanggal untuk menginput absensi •</p></div>
+                </div>
+            </div>
+
+            <div id="view-nilai" class="view-section hidden fade-in">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                        <select id="grade-class" onchange="UI.loadGradeForm()" class="bg-slate-50 border border-slate-200 rounded-lg p-2.5 outline-none"><option value="">Pilih Kelas</option></select>
+                        <select id="grade-type" class="bg-slate-50 border border-slate-200 rounded-lg p-2.5 outline-none"><option value="AF">Ulangan/Tugas/Praktik</option><option value="ATS">Asesmen Tengah Semester</option><option value="AAS">Asesmen Akhir Semester</option></select>
+                        <input type="text" id="grade-title" placeholder="Mapel/Materi/Tujuan Pembelajaran" class="md:col-span-2 bg-slate-50 border border-slate-200 rounded-lg p-2.5 outline-none">
+                    </div>
+                    <div id="grade-form" class="hidden">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-bold text-slate-700">Input Nilai</h3>
+                            <button onclick="Security.verifyAction(Data.saveGrades)" class="bg-primary-600 text-white px-6 py-2 rounded-lg shadow font-medium"><i class="fa-solid fa-save mr-2"></i>Simpan</button>
+                        </div>
+                        <div id="grade-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+                    </div>
+                     <div id="grade-empty" class="text-center py-12 text-slate-400"><i class="fa-solid fa-chart-simple text-4xl mb-3"></i><p>• pilih kelas, jenis penilaian, dan materi untuk menginput nilai •</p></div>
+                </div>
+            </div>
+
+            <div id="view-rekap" class="view-section hidden fade-in">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                    <div class="flex flex-col md:flex-row justify-between gap-4 mb-6">
+                         <select id="rekap-class" onchange="UI.loadRekap()" class="bg-slate-50 border border-slate-200 rounded-lg p-2.5 outline-none w-full md:w-64"><option value="">Pilih Kelas</option></select>
+                         <div class="flex gap-2">
+                             <button onclick="Export.excel()" class="bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-bold shadow hover:bg-emerald-700"><i class="fa-solid fa-file-excel mr-2"></i>Excel</button>
+                             <button onclick="Export.pdf()" class="bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-bold shadow hover:bg-red-700"><i class="fa-solid fa-file-pdf mr-2"></i>PDF</button>
+                         </div>
+                    </div>
+                    <div id="rekap-info" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 bg-slate-50 p-4 rounded-xl border border-slate-200 hidden"></div>
+                    <div class="overflow-x-auto border border-slate-200 rounded-xl hidden" id="rekap-container">
+                        <table class="w-full text-sm text-left border-collapse" id="rekap-table">
+                            <thead class="bg-slate-100 text-slate-700"></thead>
+                            <tbody class="divide-y divide-slate-100 bg-white"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // --- 1. CONFIGURATION ---
+        const CONFIG = {
+            accessCode: '12345',      // Kode Login
+            adminPassword: 'admin',   // Password Simpan/Hapus
+            jsonBin: {
+                binId: '696f300bd0ea881f4077b9ce',       // GANTI INI
+                apiKey: '$2a$10$u2VgGAUtSPmhmzcQfseMcepgKNXfLUnxRfwfE6v7s0UFMjXaI8Avm'      // GANTI INI
+            },
+            storageKey: 'edu_data_pro_v4'
+        };
+
+        // --- 2. AUTH ---
+        const Auth = {
+            mode: 'local',
+            toggleInputs() {
+                const isCloud = document.querySelector('input[name="storage-mode"]:checked').value === 'cloud';
+                document.getElementById('cloud-inputs').classList.toggle('hidden', !isCloud);
+            },
+            async login() {
+                const inputCode = document.getElementById('login-code').value;
+                const selectedMode = document.querySelector('input[name="storage-mode"]:checked').value;
+
+                if (inputCode !== CONFIG.accessCode) return Swal.fire('Akses Ditolak!', '• pastikan kode akses yang dimasukkan benar •', 'error');
+
+                this.mode = selectedMode;
+                document.getElementById('loading-overlay').classList.remove('hidden');
+                document.getElementById('loading-text').innerText = selectedMode === 'cloud' ? 'Menghubungkan...' : 'Memuat...';
+                
+                try {
+                    await Data.init(this.mode);
+                    document.getElementById('login-screen').classList.add('hidden');
+                    document.getElementById('main-app').classList.remove('hidden');
+                    document.getElementById('loading-overlay').classList.add('hidden');
+                    
+                    const indicator = document.getElementById('storage-indicator');
+                    if(this.mode === 'cloud') {
+                        indicator.innerText = 'Cloud';
+                        indicator.className = 'text-[10px] font-bold capitalize tracking-wider text-white bg-indigo-500 px-2 py-0.5 rounded-full';
+                    } else {
+                        indicator.innerText = 'Lokal';
+                        indicator.className = 'text-[10px] font-bold capitalize tracking-wider text-slate-600 bg-slate-200 px-2 py-0.5 rounded-full';
+                    }
+                    UI.init();
+                } catch (error) {
+                    document.getElementById('loading-overlay').classList.add('hidden');
+                    Swal.fire('Error Login', error.message, 'error');
+                }
+            },
+            logout() { location.reload(); }
+        };
+
+        const Security = {
+            async verifyAction(callback) {
+                const { value: password } = await Swal.fire({
+                    title: 'Halaman Verifikasi', input: 'password', inputPlaceholder: '•••••',
+                    showCancelButton: true, confirmButtonText: 'Lanjut'
+                });
+                if (password === CONFIG.adminPassword) callback();
+                else if (password) Swal.fire('Verifikasi Gagal!', '• pastikan kata sandi yang dimasukkan benar •', 'error');
+            }
+        };
+
+        // --- 3. DATA MANAGER ---
+        const Data = {
+            db: { classes: [], students: [], attendance: [], grades: [] },
+
+            async init(mode) {
+                if (mode === 'local') {
+                    const saved = localStorage.getItem(CONFIG.storageKey);
+                    if(saved) this.db = JSON.parse(saved);
+                } else {
+                    if(CONFIG.jsonBin.binId.includes('GANTI')) throw new Error("Ganti BIN_ID dan API_KEY dulu!");
+                    const res = await fetch(`https://api.jsonbin.io/v3/b/${CONFIG.jsonBin.binId}/latest`, {
+                        headers: { 'X-Master-Key': CONFIG.jsonBin.apiKey, 'X-Bin-Meta': false }
+                    });
+                    if(!res.ok) throw new Error("Gagal ambil data Cloud");
+                    this.db = await res.json();
+                }
+            },
+
+            async save() {
+                const loading = document.getElementById('loading-overlay');
+                if(Auth.mode === 'cloud') { loading.classList.remove('hidden'); document.getElementById('loading-text').innerText = "Menyimpan..."; }
+
+                try {
+                    if (Auth.mode === 'local') {
+                        localStorage.setItem(CONFIG.storageKey, JSON.stringify(this.db));
+                    } else {
+                        await fetch(`https://api.jsonbin.io/v3/b/${CONFIG.jsonBin.binId}`, {
+                            method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-Master-Key': CONFIG.jsonBin.apiKey },
+                            body: JSON.stringify(this.db)
+                        });
+                    }
+                    if(Auth.mode === 'cloud') loading.classList.add('hidden');
+                    Swal.fire({ icon: 'success', title: 'Data berhasil disimpan!', toast: true, position: 'top-end', showConfirmButton: false, timer: 1500 });
+                    UI.updateDashboard();
+                } catch (e) {
+                    loading.classList.add('hidden'); Swal.fire('Gagal!', '• perangkat tidak terhubung ke jaringan internet •', 'error');
+                }
+            },
+
+            // --- CRUD ACTIONS ---
+            processAddClass(nama, wali) {
+                this.db.classes.push({ id: 'c'+Date.now(), nama, wali });
+                this.save(); UI.renderClasses();
+            },
+            
+            processDeleteClass(id) {
+                this.db.classes = this.db.classes.filter(c => c.id !== id);
+                this.db.students = this.db.students.filter(s => s.classId !== id);
+                this.save(); UI.renderClasses();
+            },
+
+            processAddStudent(classId, nama, nis) {
+                this.db.students.push({ id: 's'+Date.now(), classId, nama, nis });
+                this.save(); UI.renderStudents();
+            },
+
+            processBulkAddStudents(classId, studentsArray) {
+                studentsArray.forEach((s, i) => {
+                    this.db.students.push({ id: 's'+Date.now()+i, classId, nama: s.nama, nis: s.nis });
+                });
+                this.save(); UI.renderStudents();
+                Swal.fire('Sukses!', `${studentsArray.length} siswa berhasil ditambahkan!`, 'success');
+            },
+
+            processDeleteStudent(id) {
+                this.db.students = this.db.students.filter(s => s.id !== id);
+                this.save(); UI.renderStudents();
+            },
+
+            saveAttendance() {
+                const cid = document.getElementById('att-class').value;
+                const date = document.getElementById('att-date').value;
+                if(!cid || !date) return Swal.fire('Gagal!', 'Data belum lengkap!', 'warning');
+
+                const records = {};
+                document.querySelectorAll('.att-radio:checked').forEach(r => records[r.name.split('_')[1]] = r.value);
+
+                Data.db.attendance = Data.db.attendance.filter(a => !(a.classId === cid && a.date === date));
+                Data.db.attendance.push({ classId: cid, date, records });
+                Data.save();
+            },
+
+            saveGrades() {
+                const cid = document.getElementById('grade-class').value;
+                const type = document.getElementById('grade-type').value;
+                const title = document.getElementById('grade-title').value;
+                const date = new Date().toISOString().split('T')[0];
+                if(!cid || !title) return Swal.fire('Gagal!', 'Judul/Kelas kosong!', 'warning');
+
+                const records = {};
+                document.querySelectorAll('.grade-input').forEach(i => { if(i.value) records[i.dataset.id] = i.value; });
+
+                const idx = Data.db.grades.findIndex(g => g.classId === cid && g.type === type && g.title === title);
+                if(idx >= 0) Data.db.grades[idx] = { classId: cid, date, type, title, records };
+                else Data.db.grades.push({ classId: cid, date, type, title, records });
+
+                Data.save();
+            }
+        };
+
+        // --- 4. UI CONTROLLER ---
+        const UI = {
+            activeClassId: null,
+            init() {
+                this.updateClock(); setInterval(this.updateClock, 1000);
+                document.getElementById('att-date').value = new Date().toISOString().split('T')[0];
+                this.renderClasses(); this.populateSelects(); this.updateDashboard();
+            },
+            updateClock() { document.getElementById('clock').innerText = new Date().toLocaleString('id-ID', { weekday:'long', day:'numeric', month:'numeric', year:'numeric', hour:'2-digit', minute:'2-digit'}); },
+            populateSelects() {
+                const opts = '<option value="">-- pilih kelas --</option>' + Data.db.classes.map(c => `<option value="${c.id}">${c.nama}</option>`).join('');
+                ['att-class', 'grade-class', 'rekap-class'].forEach(id => document.getElementById(id).innerHTML = opts);
+            },
+            updateDashboard() {
+                document.getElementById('dash-kelas').innerText = Data.db.classes.length;
+                document.getElementById('dash-siswa').innerText = Data.db.students.length;
+                const today = new Date().toISOString().split('T')[0];
+                let hadir = 0;
+                Data.db.attendance.filter(a => a.date === today).forEach(a => Object.values(a.records).forEach(v => { if(v==='H') hadir++ }));
+                document.getElementById('dash-hadir').innerText = hadir;
+            },
+
+            // Class UI
+            renderClasses() {
+                document.getElementById('class-grid').innerHTML = Data.db.classes.map(c => {
+                    const cnt = Data.db.students.filter(s => s.classId === c.id).length;
+                    return `<div class="bg-white p-5 rounded-xl border border-slate-200 hover:shadow-md relative group transition-all">
+                        <button onclick="Security.verifyAction(() => Data.processDeleteClass('${c.id}'))" class="absolute top-3 right-3 text-red-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition"><i class="fa-solid fa-trash"></i></button>
+                        <div class="flex items-center gap-4 mb-3">
+                            <div class="w-12 h-12 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center font-bold text-lg">${c.nama.substring(0,2).toUpperCase()}</div>
+                            <div><h3 class="font-bold text-slate-800">${c.nama}</h3><p class="text-xs text-slate-500">${c.wali}</p></div>
+                        </div>
+                        <div class="flex justify-between border-t border-slate-100 pt-3 mt-2">
+                            <span class="text-xs font-semibold text-slate-500 bg-slate-100 px-2 py-1 rounded">${cnt} Siswa</span>
+                            <button onclick="UI.manageStudents('${c.id}', '${c.nama}')" class="text-sm text-primary-600 font-bold">Kelola</button>
+                        </div>
+                    </div>`;
+                }).join('');
+            },
+            async showAddClassModal() {
+                const { value } = await Swal.fire({
+                    title: 'Halaman Tambah Kelas', html: '<input id="swal-nama" class="swal2-input" placeholder="Nama Kelas"><input id="swal-wali" class="swal2-input" placeholder="Nama Walikelas">',
+                    showCancelButton: true, preConfirm: () => [document.getElementById('swal-nama').value, document.getElementById('swal-wali').value]
+                });
+                if(value && value[0]) { Data.processAddClass(value[0], value[1]); UI.populateSelects(); }
+            },
+
+            // Student UI
+            manageStudents(id, name) {
+                this.activeClassId = id;
+                document.getElementById('class-grid').classList.add('hidden');
+                document.getElementById('student-management').classList.remove('hidden');
+                document.getElementById('manage-title').innerText = `Siswa: ${name}`;
+                this.renderStudents();
+            },
+            closeStudentManagement() {
+                document.getElementById('student-management').classList.add('hidden');
+                document.getElementById('class-grid').classList.remove('hidden');
+            },
+            renderStudents() {
+                const list = document.getElementById('student-list');
+                const students = Data.db.students.filter(s => s.classId === this.activeClassId);
+                list.innerHTML = students.length ? students.map((s, i) => `
+                    <tr class="hover:bg-slate-50 group">
+                        <td class="py-3 px-2">${i+1}</td><td class="py-3 font-mono text-slate-500">${s.nis}</td><td class="py-3 font-medium text-slate-700">${s.nama}</td>
+                        <td class="text-right"><button onclick="Security.verifyAction(() => Data.processDeleteStudent('${s.id}'))" class="text-red-300 hover:text-red-500 opacity-0 group-hover:opacity-100"><i class="fa-solid fa-trash"></i></button></td>
+                    </tr>
+                `).join('') : '<tr><td colspan="4" class="text-center py-8 text-slate-400">Belum ada siswa</td></tr>';
+            },
+            async showBulkAddStudentModal() {
+                const { value: text } = await Swal.fire({
+                    title: 'Halaman Impor Data Siswa',
+                    input: 'textarea',
+                    inputLabel: 'Silakan, ketik/salin data pada kolom di bawah ini:',
+                    inputPlaceholder: 'Contoh:\nBudi Santoso, 1001\nSiti Aminah, 1002',
+                    inputAttributes: { 'rows': 10 },
+                    showCancelButton: true,
+                    confirmButtonText: 'Impor'
+                });
+
+                if (text) {
+                    const newStudents = [];
+                    // Memecah baris per baris
+                    text.split('\n').forEach(line => {
+                        if (!line.trim()) return; // Lewati baris kosong
+                        
+                        // Regex ini menangani Tab (Excel), Koma, Titik Koma, atau Pipa
+                        let parts = line.split(/[\t,;|]+/); 
+                        
+                        if (parts.length >= 1) {
+                            // Hapus karakter aneh/spasi di awal & akhir
+                            const nama = parts[0].trim();
+                            // Jika NIS tidak ada, isi strip
+                            const nis = (parts[1] && parts[1].trim() !== "") ? parts[1].trim() : '-';
+                            
+                            // Validasi minimal nama harus ada
+                            if(nama && nama.length > 1) {
+                                newStudents.push({ nama, nis });
+                            }
+                        }
+                    });
+
+                    if (newStudents.length > 0) {
+                        // PERBAIKAN DI SINI: Gunakan 'UI.activeClassId' bukan 'this.activeClassId'
+                        Data.processBulkAddStudents(UI.activeClassId, newStudents);
+                    } else {
+                        Swal.fire('Gagal!', 'Tidak ada data yang terbaca. Pastikan format benar.', 'warning');
+                    }
+                }
+            },
+			
+			async showAddStudentModal() {
+                const { value } = await Swal.fire({
+                    title: 'Halaman Tambah Data Siswa',
+                    html: '<input id="swal-n" class="swal2-input" placeholder="Nama Lengkap"><input id="swal-nis" class="swal2-input" placeholder="NISN">',
+                    showCancelButton: true, preConfirm: () => [document.getElementById('swal-n').value, document.getElementById('swal-nis').value]
+                });
+                if(value && value[0]) Data.processAddStudent(UI.activeClassId, value[0], value[1]);
+            },
+
+            // Attendance & Grades UI
+            loadAttForm() {
+                const cid = document.getElementById('att-class').value;
+                const date = document.getElementById('att-date').value;
+                const container = document.getElementById('att-form');
+                const list = document.getElementById('att-list');
+                
+                if(!cid || !date) { container.classList.add('hidden'); document.getElementById('att-empty').classList.remove('hidden'); return; }
+                document.getElementById('att-empty').classList.add('hidden'); container.classList.remove('hidden');
+                
+                const students = Data.db.students.filter(s => s.classId === cid);
+                const saved = (Data.db.attendance.find(a => a.classId === cid && a.date === date) || {}).records || {};
+
+                list.innerHTML = students.map(s => {
+                    const v = saved[s.id] || 'H';
+                    return `<div class="flex items-center justify-between bg-slate-50 p-2 rounded border border-slate-200">
+                        <span class="font-medium text-slate-700 w-1/3 truncate">${s.nama}</span>
+                        <div class="flex gap-1">
+                            ${['H','S','I','A'].map(x => `<label class="cursor-pointer relative"><input type="radio" name="att_${s.id}" value="${x}" ${v===x?'checked':''} class="peer hidden att-radio"><div class="w-8 h-8 flex items-center justify-center rounded font-bold text-slate-400 bg-white border hover:bg-slate-100 peer-checked:bg-slate-800 peer-checked:text-white peer-checked:border-slate-800 transition">${x}</div></label>`).join('')}
+                        </div>
+                    </div>`;
+                }).join('');
+            },
+
+            loadGradeForm() {
+                const cid = document.getElementById('grade-class').value;
+                const list = document.getElementById('grade-list');
+                if(!cid) { document.getElementById('grade-form').classList.add('hidden'); document.getElementById('grade-empty').classList.remove('hidden'); return; }
+                document.getElementById('grade-empty').classList.add('hidden'); document.getElementById('grade-form').classList.remove('hidden');
+                
+                list.innerHTML = Data.db.students.filter(s => s.classId === cid).map(s => `
+                    <div class="bg-slate-50 p-3 rounded border flex justify-between items-center">
+                        <div class="truncate w-32"><div class="font-bold text-sm text-slate-700">${s.nama}</div><div class="text-[10px] text-slate-400">${s.nis}</div></div>
+                        <input type="number" data-id="${s.id}" class="grade-input w-20 text-center border p-1 rounded outline-none focus:ring-1 focus:ring-primary-500" placeholder="0">
+                    </div>
+                `).join('');
+            },
+
+            // Rekap UI
+            loadRekap() {
+                const cid = document.getElementById('rekap-class').value;
+                const info = document.getElementById('rekap-info');
+                const cont = document.getElementById('rekap-container');
+                const head = document.querySelector('#rekap-table thead');
+                const body = document.querySelector('#rekap-table tbody');
+
+                if(!cid) { info.classList.add('hidden'); cont.classList.add('hidden'); return; }
+                info.classList.remove('hidden'); cont.classList.remove('hidden');
+                const cls = Data.db.classes.find(c => c.id === cid);
+                const stds = Data.db.students.filter(s => s.classId === cid);
+                const grds = Data.db.grades.filter(g => g.classId === cid);
+
+                info.innerHTML = `<div><p class="text-[12px] capitalize text-slate-500 font-bold">Kelas:</p><p class="font-bold">${cls.nama}</p></div><div><p class="text-[12px] capitalize text-slate-500 font-bold">Walikelas:</p><p class="font-bold">${cls.wali}</p></div><div><p class="text-[12px] capitalize text-slate-500 font-bold">Jumlah Siswa:</p><p class="font-bold">${stds.length}</p></div><div><p class="text-[12px] capitalize text-slate-500 font-bold">Daftar Nilai:</p><p class="font-bold">${grds.length}</p></div>`;
+
+                let h1 = `<tr><th rowspan="2" class="p-3 border text-center">No.</th><th rowspan="2" class="p-3 border text-center">Nama Lengkap</th><th colspan="4" class="p-2 border text-center bg-emerald-50">Absensi</th>`;
+                if(grds.length) h1 += `<th colspan="${grds.length}" class="p-2 border text-center bg-blue-50">Nilai</th>`;
+                h1 += `<th rowspan="2" class="p-3 border text-center">Rerata</th></tr>`;
+                
+                let h2 = `<tr class="text-xs bg-slate-50"><th class="p-1 border text-center">H</th><th class="p-1 border text-center">S</th><th class="p-1 border text-center">I</th><th class="p-1 border text-center">A</th>`;
+                grds.forEach(g => h2 += `<th class="p-1 border text-center whitespace-nowrap" title="${g.title}">${g.title}<br><span class="text-[9px]">${g.type}</span></th>`);
+                h2 += `</tr>`;
+                head.innerHTML = h1 + h2;
+
+                body.innerHTML = stds.map((s, i) => {
+                    let h=0, sk=0, iz=0, al=0;
+                    Data.db.attendance.filter(a => a.classId === cid).forEach(a => { const v = a.records[s.id]; if(v==='H') h++; if(v==='S') sk++; if(v==='I') iz++; if(v==='A') al++; });
+                    let tot=0, cnt=0, cols='';
+                    grds.forEach(g => { const val = g.records[s.id] || 0; if(val>0) { tot+=parseFloat(val); cnt++; } cols += `<td class="p-3 border text-center ${val<75 && val>0 ? 'text-red-500 font-bold':''}">${val||'-'}</td>`; });
+                    return `<tr class="hover:bg-slate-50"><td class="p-3 border text-center text-slate-500">${i+1}</td><td class="p-3 border font-medium">${s.nama}</td><td class="p-3 border text-center font-bold text-emerald-600 bg-emerald-50/30">${h}</td><td class="p-3 border text-center text-amber-600">${sk}</td><td class="p-3 border text-center text-blue-600">${iz}</td><td class="p-3 border text-center text-red-600">${al}</td>${cols}<td class="p-3 border text-center font-bold bg-slate-50">${cnt ? (tot/cnt).toFixed(1) : 0}</td></tr>`;
+                }).join('');
+            }
+        };
+
+        const App = {
+            switchTab(id) {
+                document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+                document.getElementById('view-'+id).classList.remove('hidden');
+                document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.replace('text-primary-600','text-slate-500'));
+                document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.replace('border-primary-600','border-transparent'));
+                const btn = document.getElementById('nav-'+id);
+                btn.classList.replace('text-slate-500','text-primary-600');
+                btn.classList.replace('border-transparent','border-primary-600');
+                if(id==='rekap') UI.loadRekap();
+            }
+        };
+
+        const Export = {
+        excel() {
+            const t = document.getElementById('rekap-table');
+            if(t.rows.length <= 2) return Swal.fire('Kosong', 'Tidak ada data', 'warning');
+            
+            // Nama file dinamis
+            const classId = document.getElementById('rekap-class').value;
+            const cls = Data.db.classes.find(c => c.id === classId);
+            const fileName = cls ? `Rekapitulasi_Absensi_dan_Nilai_${cls.nama}.xlsx` : `Rekap_Nilai.xlsx`;
+            
+            XLSX.writeFile(XLSX.utils.table_to_book(t), fileName);
+        },
+
+        pdf() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('l', 'mm', 'a4'); // Landscape
+
+            // 1. Ambil Data Kelas & Wali Kelas
+            const classId = document.getElementById('rekap-class').value;
+            const cls = Data.db.classes.find(c => c.id === classId);
+            
+            const className = cls ? cls.nama : 'Sekolah';
+            const waliName = cls ? cls.wali : '-';
+
+            // 2. Tulis Judul & Identitas
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(14);
+            doc.text(`REKAPITULASI ABSENSI DAN NILAI ${className.toUpperCase()}`, 14, 15);
+
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(12);
+            doc.text(`Wali Kelas: ${waliName}`, 14, 22); // Menampilkan Wali Kelas
+
+            // 3. Generate Tabel dengan Rata Tengah
+            doc.autoTable({
+                html: '#rekap-table',
+                startY: 28, // Geser ke bawah sedikit agar tidak menumpuk dengan teks Wali Kelas
+                theme: 'grid',
+                styles: { 
+                    fontSize: 10,
+                    cellPadding: 2,
+                    halign: 'center', // <-- INI YANG MEMBUAT RATA TENGAH (Horizontal)
+                    valign: 'middle'  // <-- Rata tengah secara Vertikal
+                },
+                headStyles: {
+                    halign: 'center', // Header juga rata tengah
+                    valign: 'middle',
+                    fillColor: [63, 81, 181], // Warna Header Biru (Opsional)
+                    textColor: 255
+                },
+        
+				columnStyles: {
+					1: { halign: 'left' } 
+				}
+            });
+
+            doc.save(`Rekapitulasi_Absensi_dan_Nilai_${className}.pdf`);
+        }
+    };
+    </script>
+</body>
+</html>
