@@ -36,13 +36,21 @@
     </style>
 </head>
 <body class="bg-slate-100 text-slate-800 h-screen flex flex-col overflow-hidden font-sans">
+	    <div id="login-screen" class="fixed inset-0 z-[100] bg-slate-900 flex flex-col items-center justify-center p-4 transition-all duration-500">
+		
+		<button onclick="StudentPortal.init()" 
+    class="fixed top-6 right-6 z-50 bg-white/80 backdrop-blur-sm hover:bg-white text-emerald-600 px-5 py-2.5 rounded-full shadow-lg border border-emerald-100 font-bold text-sm transition-all hover:scale-105 flex items-center gap-2 group">
+    <span class="bg-emerald-100 text-emerald-600 w-12 h-6 rounded-full flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+        <i class="fa-solid fa-magnifying-glass"></i>
+    </span>
+    <span class="text-slate-600 group-hover:text-emerald-700">Cek Absensi dan Nilai Siswa</span>
+</button>
 
-    <div id="login-screen" class="fixed inset-0 z-[100] bg-slate-900 flex flex-col items-center justify-center p-4 transition-all duration-500">
         <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md text-center fade-in">
             <div class="mb-6 inline-flex p-4 bg-primary-50 rounded-full text-primary-600">
                 <i class="fa-solid fa-school text-3xl"></i>
             </div>
-            <h1 class="text-2xl font-bold text-slate-800 mb-2">Manajemen Kelas</h1>
+		    <h1 class="text-2xl font-bold text-slate-800 mb-2">Manajemen Kelas</h1>
             <p class="text-slate-500 mb-4 font-bold text-sm">Pendidikan Agama Islam dan Budi Pekerti<br>SD Negeri Curug Dengdeng</p>
 
             <div class="grid grid-cols-2 gap-4 mb-6">
@@ -77,8 +85,112 @@
 
             <button onclick="Auth.login()" class="w-full bg-primary-600 hover:bg-primary-700 text-white py-3.5 rounded-xl font-bold shadow-lg shadow-primary-500/30 mt-2 transition-all transform hover:scale-[1.02]">
                 Masuk</button>
-        </div>
+       		</div>
+		
+		
         <p class="text-slate-500 text-xs mt-4 text-center">Dibuat oleh:<br><b>Dede Ardi Hikmatulloh, S.Th.I</b><br>© 2025 - Portal PAI Dasar</p>
+    </div>
+	
+	<div id="student-search-screen" class="hidden fixed inset-0 z-[110] bg-slate-900 flex flex-col items-center justify-center p-4 transition-all duration-500">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md fade-in relative">
+            <button onclick="StudentPortal.close()" class="absolute top-4 right-4 text-slate-300 hover:text-slate-500"><i class="fa-solid fa-times text-xl"></i></button>
+            
+            <div class="text-center mb-6">
+                <div class="inline-flex p-3 bg-emerald-50 rounded-full text-emerald-600 mb-3">
+                    <i class="fa-solid fa-user-graduate text-2xl"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-slate-800">ABSENSI DAN NILAI SISWA</h2>
+                <p class="text-slate-500 text-xs">Pilih mode penyimpanan, tentukan kelas, dan cari nama siswa.</p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 mb-4">
+                <label class="cursor-pointer">
+                    <input type="radio" name="stu-storage" value="local" checked class="peer hidden" onchange="StudentPortal.loadDataSource()">
+                    <div class="p-3 rounded-lg border border-slate-200 peer-checked:border-emerald-500 peer-checked:bg-emerald-50 text-center">
+                        <i class="fa-solid fa-hard-drive text-slate-400 peer-checked:text-emerald-600 mb-1"></i>
+                        <div class="text-xs font-bold text-slate-700">Lokal</div>
+                    </div>
+                </label>
+                <label class="cursor-pointer">
+                    <input type="radio" name="stu-storage" value="cloud" class="peer hidden" onchange="StudentPortal.loadDataSource()">
+                    <div class="p-3 rounded-lg border border-slate-200 peer-checked:border-emerald-500 peer-checked:bg-emerald-50 text-center">
+                        <i class="fa-solid fa-cloud text-slate-400 peer-checked:text-emerald-600 mb-1"></i>
+                        <div class="text-xs font-bold text-slate-700">Cloud</div>
+                    </div>
+                </label>
+            </div>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="text-m font-bold text-slate-500 ml-1">Kelas:</label>
+                    <select id="stu-class" onchange="StudentPortal.populateStudentList()" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-emerald-500" disabled>
+                        <option value="">-- memuat data --</option>
+                    </select>
+                </div>
+                <div>
+    <label class="text-m font-bold text-slate-500 ml-1">Nama Siswa:</label>
+    <input type="text" id="stu-name-text" placeholder="Contoh: Budi" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-emerald-500" disabled autocomplete="off">
+    <p class="text-[10px] text-slate-400 mt-1 ml-1"><b>Catatan:</b><br>- Isi dengan nama panggilan atau nama lengkap.<br>- Pastikan ejaan yang dimasukkan benar.</p>
+</div>
+                <button onclick="StudentPortal.showResult()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl font-bold shadow-lg shadow-emerald-500/30 mt-2 transition-all">
+                    Cari
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="student-result-modal" class="hidden fixed inset-0 z-[200] bg-slate-900/90 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto relative fade-in">
+            <button onclick="document.getElementById('student-result-modal').classList.add('hidden')" class="absolute top-4 right-4 z-10 bg-slate-100 text-slate-500 hover:bg-red-100 hover:text-red-500 w-8 h-8 rounded-full flex items-center justify-center transition"><i class="fa-solid fa-times"></i></button>
+            
+            <div class="bg-slate-100 p-6 border-b border-slate-200">
+                <div class="flex items-center gap-4">
+                    <div class="w-16 h-16 rounded-full bg-white text-emerald-600 shadow flex items-center justify-center text-3xl">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-800" id="res-nama">Nama Siswa</h2>
+                        <div class="flex gap-3 text-sm text-slate-500 mt-1">
+                            <span id="res-nis" class="bg-white px-2 py-0.5 rounded border border-slate-200">-</span>
+                            <span id="res-kelas" class="bg-white px-2 py-0.5 rounded border border-slate-200">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-6 space-y-6">
+                <div>
+                    <h3 class="font-bold text-slate-700 mb-3 border-l-4 border-emerald-500 pl-3">Kehadiran:</h3>
+                    <div class="grid grid-cols-4 gap-2 text-center">
+                        <div class="bg-emerald-50 p-3 rounded-lg border border-emerald-100"><div class="text-lg font-bold text-emerald-700" id="res-h">0</div><div class="text-[10px] capitalize text-emerald-600 font-bold">Hadir</div></div>
+                        <div class="bg-amber-50 p-3 rounded-lg border border-amber-100"><div class="text-lg font-bold text-amber-700" id="res-s">0</div><div class="text-[10px] capitalize text-amber-600 font-bold">Sakit</div></div>
+                        <div class="bg-blue-50 p-3 rounded-lg border border-blue-100"><div class="text-lg font-bold text-blue-700" id="res-i">0</div><div class="text-[10px] capitalize text-blue-600 font-bold">Izin</div></div>
+                        <div class="bg-red-50 p-3 rounded-lg border border-red-100"><div class="text-lg font-bold text-red-700" id="res-a">0</div><div class="text-[10px] capitalize text-red-600 font-bold">Alpa</div></div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="font-bold text-slate-700 mb-3 border-l-4 border-blue-500 pl-3">Daftar Nilai:</h3>
+                    <div class="overflow-x-auto border border-slate-200 rounded-lg">
+                        <table class="w-full text-sm text-left">
+                            <thead class="bg-slate-50 text-slate-600 font-bold border-b border-slate-200">
+                                <tr>
+                                    <th class="p-3 text-center">Materi</th>
+                                    <th class="p-3 text-center">Jenis</th>
+                                    <th class="p-3 text-center">Nilai</th>
+                                </tr>
+                            </thead>
+                            <tbody id="res-grade-list" class="divide-y divide-slate-100">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="p-4 border-t border-slate-100 bg-slate-50 text-center">
+                <p class="text-xs text-slate-400">Manajeman Kelas - Pendidikan Agama Islam dan Budi Pekerti<br>SD Negeri Curug Dengdeng</p>
+            </div>
+        </div>
     </div>
 
     <div id="loading-overlay" class="hidden fixed inset-0 z-[250] bg-white/80 backdrop-blur-sm flex items-center justify-center">
@@ -233,8 +345,9 @@
     <script>
         // --- 1. CONFIGURATION ---
         const CONFIG = {
-            accessCode: '12345',      // Kode Login
-            adminPassword: 'admin',   // Password Simpan/Hapus
+            accessCode: '20201886',      // Kode Login
+            adminPassword: 'guru123',   // Password Simpan/Hapus
+			studentCode: 'pd123',
             jsonBin: {
                 binId: '696f300bd0ea881f4077b9ce',       // GANTI INI
                 apiKey: '$2a$10$u2VgGAUtSPmhmzcQfseMcepgKNXfLUnxRfwfE6v7s0UFMjXaI8Avm'      // GANTI INI
@@ -583,6 +696,180 @@
                     grds.forEach(g => { const val = g.records[s.id] || 0; if(val>0) { tot+=parseFloat(val); cnt++; } cols += `<td class="p-3 border text-center ${val<75 && val>0 ? 'text-red-500 font-bold':''}">${val||'-'}</td>`; });
                     return `<tr class="hover:bg-slate-50"><td class="p-3 border text-center text-slate-500">${i+1}</td><td class="p-3 border font-medium">${s.nama}</td><td class="p-3 border text-center font-bold text-emerald-600 bg-emerald-50/30">${h}</td><td class="p-3 border text-center text-amber-600">${sk}</td><td class="p-3 border text-center text-blue-600">${iz}</td><td class="p-3 border text-center text-red-600">${al}</td>${cols}<td class="p-3 border text-center font-bold bg-slate-50">${cnt ? (tot/cnt).toFixed(1) : 0}</td></tr>`;
                 }).join('');
+            }
+        };
+		
+		// --- STUDENT PORTAL CONTROLLER (VERSI FINAL - FIX MANUAL INPUT) ---
+        const StudentPortal = {
+            dataLoaded: false,
+
+            async init() {
+                // 1. Verifikasi Kode Akses
+                const { value: code } = await Swal.fire({
+                    title: 'Halaman Verifikasi',
+                    input: 'password',
+                    inputLabel: 'Silakan masukkan kode akses terlebih dahulu:',
+                    inputPlaceholder: '•••••',
+                    confirmButtonText: 'Masuk',
+                    confirmButtonColor: '#059669',
+                    showCancelButton: true
+                });
+
+                if (code === CONFIG.studentCode) {
+                    document.getElementById('login-screen').classList.add('hidden');
+                    document.getElementById('student-search-screen').classList.remove('hidden');
+                    this.loadDataSource(); 
+                } else if (code) {
+                    // Pesan Error jika salah
+                    Swal.fire('Akses Ditolak', '• pastikan kode akses yang dimasukkan benar •', 'error');
+                }
+            },
+				
+            close() {
+                document.getElementById('student-search-screen').classList.add('hidden');
+                document.getElementById('login-screen').classList.remove('hidden');
+            },
+
+            async loadDataSource() {
+                const mode = document.querySelector('input[name="stu-storage"]:checked').value;
+                const classSelect = document.getElementById('stu-class');
+                const nameInput = document.getElementById('stu-name-text'); // <-- SUDAH DIPERBAIKI (ID BARU)
+                
+                // UI Loading state
+                classSelect.innerHTML = '<option>Memuat data...</option>';
+                classSelect.disabled = true;
+                
+                // Reset Input Nama (Versi Input Text)
+                if (nameInput) {
+                    nameInput.value = '';
+                    nameInput.disabled = true;
+                    nameInput.placeholder = "Memuat data...";
+                }
+
+                try {
+                    document.getElementById('loading-overlay').classList.remove('hidden');
+                    document.getElementById('loading-text').innerText = "Menghubungkan...";
+                    
+                    await Data.init(mode); 
+                    
+                    document.getElementById('loading-overlay').classList.add('hidden');
+                    this.dataLoaded = true;
+
+                    // Populate Kelas
+                    const classes = Data.db.classes || [];
+                    if (classes.length > 0) {
+                        classSelect.innerHTML = '<option value="">-- pilih kelas --</option>' + 
+                            classes.map(c => `<option value="${c.id}">${c.nama}</option>`).join('');
+                        classSelect.disabled = false;
+                    } else {
+                        classSelect.innerHTML = '<option>-- tidak ada data --</option>';
+                    }
+
+                    // Kembalikan placeholder nama
+                    if (nameInput) nameInput.placeholder = "-- kelas belum dipilih --";
+
+                } catch (e) {
+                    console.error(e); // Untuk debugging
+                    document.getElementById('loading-overlay').classList.add('hidden');
+                    Swal.fire('Gagal Memuat!', '• jika memilih Cloud, pastikan perangkat terhubung ke jaringan internet •', 'error');
+                    classSelect.innerHTML = '<option>Gagal Memuat</option>';
+                }
+            },
+
+            populateStudentList() {
+                const classId = document.getElementById('stu-class').value;
+                const nameInput = document.getElementById('stu-name-text');
+                
+                if (!classId) {
+                    nameInput.disabled = true;
+                    nameInput.value = '';
+                    nameInput.placeholder = "-- kelas belum dipilih --";
+                    return;
+                }
+
+                nameInput.disabled = false;
+                nameInput.placeholder = "Ketik nama di sini...";
+                nameInput.focus();
+            },
+
+            showResult() {
+                const classId = document.getElementById('stu-class').value;
+                const nameInputRaw = document.getElementById('stu-name-text').value;
+
+                // Validasi
+                if (!classId) return Swal.fire('Pilih Kelas', 'Silakan pilih kelas terlebih dahulu.', 'warning');
+                if (!nameInputRaw || nameInputRaw.length < 3) return Swal.fire('Nama Kurang Lengkap', 'Masukkan minimal 3 huruf nama Anda.', 'warning');
+
+                // Logika Pencarian Nama
+                const studentsInClass = Data.db.students.filter(s => s.classId === classId);
+                const searchKeyword = nameInputRaw.toLowerCase();
+                const matchedStudents = studentsInClass.filter(s => s.nama.toLowerCase().includes(searchKeyword));
+
+                if (matchedStudents.length === 0) {
+                    return Swal.fire('Tidak Ditemukan!', `• tidak ada siswa dengan nama "${nameInputRaw}" di kelas ini •`, 'error');
+                }
+
+                if (matchedStudents.length > 1) {
+                    return Swal.fire('Terlalu Umum!', `• ditemukan ${matchedStudents.length} siswa dengan nama "${nameInputRaw}", silakan ketik nama yang lebih lengkap •`, 'info');
+                }
+
+                // Siswa Ditemukan
+                const student = matchedStudents[0];
+                const studentId = student.id;
+
+                // Ambil Data Lainnya
+                const cls = Data.db.classes.find(c => c.id === classId);
+                const attendance = Data.db.attendance.filter(a => a.classId === classId);
+                const grades = Data.db.grades.filter(g => g.classId === classId);
+
+                // Render Header
+                document.getElementById('res-nama').innerText = student.nama;
+                document.getElementById('res-nis').innerText = `NISN: ${student.nis}`;
+                document.getElementById('res-kelas').innerText = `${cls.nama}`;
+
+                // Render Absensi
+                let counts = { H: 0, S: 0, I: 0, A: 0 };
+                attendance.forEach(a => {
+                    const status = a.records[studentId];
+                    if (status && counts[status] !== undefined) counts[status]++;
+                });
+                
+                document.getElementById('res-h').innerText = counts.H;
+                document.getElementById('res-s').innerText = counts.S;
+                document.getElementById('res-i').innerText = counts.I;
+                document.getElementById('res-a').innerText = counts.A;
+
+                // Render Nilai
+                const tbody = document.getElementById('res-grade-list');
+                if (grades.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="3" class="p-4 text-center text-slate-400"><i>- belum ada data -</i></td></tr>';
+                } else {
+                    let hasGrade = false;
+                    tbody.innerHTML = grades.map(g => {
+                        const score = g.records[studentId];
+                        if (!score) return ''; 
+                        hasGrade = true;
+                        
+                        let typeBadge = '';
+                        if(g.type === 'AF') typeBadge = '<span class="bg-gray-100 text-gray-600 px-2 py-0.5 rounded text-[10px] font-bold">AF</span>';
+                        if(g.type === 'ATS') typeBadge = '<span class="bg-blue-100 text-blue-600 px-2 py-0.5 rounded text-[10px] font-bold">ATS</span>';
+                        if(g.type === 'AAS') typeBadge = '<span class="bg-purple-100 text-purple-600 px-2 py-0.5 rounded text-[10px] font-bold">AAS</span>';
+
+                        const scoreClass = score < 75 ? 'text-red-600 font-bold' : 'text-slate-700 font-bold';
+
+                        return `
+                            <tr class="hover:bg-slate-50 transition">
+                                <td class="p-3 border-b border-slate-100 text-slate-700">${g.title}</td>
+                                <td class="p-3 border-b border-slate-100 text-center">${typeBadge}</td>
+                                <td class="p-3 border-b border-slate-100 text-center ${scoreClass}">${score}</td>
+                            </tr>
+                        `;
+                    }).join('');
+
+                    if (!hasGrade) tbody.innerHTML = '<tr><td colspan="3" class="p-4 text-center text-slate-400"><i>-- belum ada data --</i></td></tr>';
+                }
+
+                document.getElementById('student-result-modal').classList.remove('hidden');
             }
         };
 
