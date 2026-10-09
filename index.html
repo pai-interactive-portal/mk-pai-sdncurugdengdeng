@@ -35,10 +35,10 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body class="bg-slate-100 text-slate-800 h-screen flex flex-col overflow-hidden font-sans">
-	    <div id="login-screen" class="fixed inset-0 z-[100] bg-slate-900 flex flex-col items-center justify-center p-4 transition-all duration-500">
+<body class="bg-slate-100 text-slate-800 flex flex-col overflow-hidden font-sans">
+	    <div id="login-screen" class="min-h-screen z-[100] bg-slate-900 flex flex-col items-center justify-center p-2 transition-all duration-500">
 		
-		 <div class="bg-white p-4 rounded-2xl shadow-2xl w-full max-w-md text-center fade-in">
+        <div class="bg-white p-4 rounded-2xl shadow-2xl w-full max-w-md text-center fade-in">
             <div class="mb-6 inline-flex p-4 bg-primary-50 rounded-full text-primary-600">
                 <i class="fa-solid fa-school text-3xl"></i>
             </div>
@@ -72,7 +72,7 @@
 
                 <div id="cloud-inputs" class="hidden space-y-3 pt-2 mt-2 border-slate-100">
                     <div class="text-xs text-center text-amber-600 bg-amber-50 p-2 rounded">• pastikan perangkat terhubung ke jaringan internet •</div>
-                    </div>
+                </div>
             </div>
 
             <button onclick="Auth.login()" class="w-full bg-primary-600 hover:bg-primary-700 text-white py-3.5 rounded-xl font-bold shadow-lg shadow-primary-500/30 mt-2 transition-all transform hover:scale-[1.02]">
@@ -86,8 +86,8 @@
 					<span class="text-slate-600 items-center justify-center group-hover:text-emerald-700">Cek Absensi dan Nilai Siswa</span>
 				</button>
        		</div>
-		
-		<p class="text-slate-500 text-xs mt-4 text-center">Dibuat oleh:<br><b>Dede Ardi Hikmatulloh, S.Th.I</b><br>© 2025 - Portal PAI Dasar</p>
+
+        <p class="text-slate-500 text-xs mt-4 text-center">Dibuat oleh:<br><b>Dede Ardi Hikmatulloh, S.Th.I</b><br>© 2025 - Portal PAI Dasar</p>
     </div>
 	
 	<div id="student-search-screen" class="hidden fixed inset-0 z-[110] bg-slate-900 flex flex-col items-center justify-center p-4 transition-all duration-500">
@@ -127,10 +127,10 @@
                     </select>
                 </div>
                 <div>
-    <label class="text-m font-bold text-slate-500 ml-1">Nama Siswa:</label>
-    <input type="text" id="stu-name-text" placeholder="Contoh: Budi" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-emerald-500" disabled autocomplete="off">
-    <p class="text-[10px] text-slate-400 mt-1 ml-1"><b>Catatan:</b><br>- Isi dengan nama panggilan atau nama lengkap.<br>- Pastikan ejaan yang dimasukkan benar.</p>
-</div>
+                    <label class="text-m font-bold text-slate-500 ml-1">Nama Siswa:</label>
+                    <input type="text" id="stu-name-text" placeholder="Contoh: Budi" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-emerald-500" disabled autocomplete="off">
+                    <p class="text-[10px] text-slate-400 mt-1 ml-1"><b>Catatan:</b><br>- Isi dengan nama panggilan atau nama lengkap.<br>- Pastikan ejaan yang dimasukkan benar.</p>
+                </div>
                 <button onclick="StudentPortal.showResult()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl font-bold shadow-lg shadow-emerald-500/30 mt-2 transition-all">
                     Cari
                 </button>
@@ -180,7 +180,7 @@
                                 </tr>
                             </thead>
                             <tbody id="res-grade-list" class="divide-y divide-slate-100">
-                                </tbody>
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -267,17 +267,20 @@
                 
                 <div id="student-management" class="hidden bg-white rounded-2xl shadow-sm border border-slate-100 p-6 relative">
                     <button onclick="UI.closeStudentManagement()" class="absolute top-0 right-2 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-times text-xl"></i></button>
-                    <div class="flex justify-between items-center mb-6 border-b pb-4">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 border-b pb-4">
                         <div>
                             <h3 class="font-bold text-lg text-slate-800" id="manage-title">Kelas X</h3>
-                            <p class="text-slate-500 text-sm">Silakan kelola (impor, tambah, atau hapus) data siswa di sini:</p>
+                            <p class="text-slate-500 text-sm">Silakan kelola (impor, tambah, edit, atau hapus) data siswa di sini:</p>
                         </div>
-                        <div class="flex gap-2">
-                            <button onclick="Security.verifyAction(UI.showBulkAddStudentModal)" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-lg shadow-indigo-500/30">
+                        <div class="flex flex-wrap gap-2">
+                            <button onclick="Security.verifyAction(UI.showBulkAddStudentModal)" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-lg text-sm font-medium shadow-lg shadow-indigo-500/30">
                                 <i class="fa-solid fa-file-import mr-1"></i> Impor Data Siswa
                             </button>
-                            <button onclick="Security.verifyAction(UI.showAddStudentModal)" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-lg shadow-emerald-500/30">
+                            <button onclick="Security.verifyAction(UI.showAddStudentModal)" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-lg text-sm font-medium shadow-lg shadow-emerald-500/30">
                                 <i class="fa-solid fa-user-plus mr-1"></i> Tambah Data Siswa
+                            </button>
+                            <button onclick="Security.verifyAction(() => Data.processDeleteAllStudents(UI.activeClassId))" class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg text-sm font-medium shadow-lg shadow-red-500/30">
+                                <i class="fa-solid fa-trash-can mr-1"></i> Hapus Semua Siswa
                             </button>
                         </div>
                     </div>
@@ -310,9 +313,17 @@
                         <input type="text" id="grade-title" placeholder="Mapel/Materi/Tujuan Pembelajaran" class="md:col-span-2 bg-slate-50 border border-slate-200 rounded-lg p-2.5 outline-none">
                     </div>
                     <div id="grade-form" class="hidden">
-                        <div class="flex justify-between items-center mb-4">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4">
                             <h3 class="font-bold text-slate-700">Input Nilai</h3>
-                            <button onclick="Security.verifyAction(Data.saveGrades)" class="bg-primary-600 text-white px-6 py-2 rounded-lg shadow font-medium"><i class="fa-solid fa-save mr-2"></i>Simpan</button>
+                            <!-- FITUR TAMBAHAN: Tombol Input Nilai Kolektif / Excel -->
+                            <div class="flex gap-2">
+                                <button onclick="UI.showBulkGradeModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg shadow font-medium text-sm flex items-center gap-2 transition">
+                                    <i class="fa-solid fa-paste"></i> Impor Nilai 
+                                </button>
+                                <button onclick="Security.verifyAction(Data.saveGrades)" class="bg-primary-600 hover:bg-primary-700 text-white px-6 py-2 rounded-lg shadow font-medium text-sm flex items-center gap-2 transition">
+                                    <i class="fa-solid fa-save"></i> Simpan
+                                </button>
+                            </div>
                         </div>
                         <div id="grade-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
                     </div>
@@ -330,6 +341,12 @@
                          </div>
                     </div>
                     <div id="rekap-info" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 bg-slate-50 p-4 rounded-xl border border-slate-200 hidden"></div>
+                    
+                    <div id="rekap-hint" class="hidden mb-3 text-xs text-slate-500 bg-amber-50 p-2.5 rounded-lg border border-amber-200 flex items-center gap-2">
+                        <i class="fa-solid fa-circle-info text-amber-600 text-base"></i>
+                        <span><b>Catatan:</b><br>Klik pada jumlah kehadiran, judul penilaian, dan/atau nilai untuk mengubahnya satu per satu secara langsung.</span>
+                    </div>
+
                     <div class="overflow-x-auto border border-slate-200 rounded-xl hidden" id="rekap-container">
                         <table class="w-full text-sm text-left border-collapse" id="rekap-table">
                             <thead class="bg-slate-100 text-slate-700"></thead>
@@ -449,6 +466,17 @@
                 this.db.classes.push({ id: 'c'+Date.now(), nama, wali });
                 this.save(); UI.renderClasses();
             },
+
+            processEditClass(id, nama, wali) {
+                const cls = this.db.classes.find(c => c.id === id);
+                if(cls) {
+                    cls.nama = nama;
+                    cls.wali = wali;
+                    this.save();
+                    UI.renderClasses();
+                    UI.populateSelects();
+                }
+            },
             
             processDeleteClass(id) {
                 this.db.classes = this.db.classes.filter(c => c.id !== id);
@@ -459,6 +487,16 @@
             processAddStudent(classId, nama, nis) {
                 this.db.students.push({ id: 's'+Date.now(), classId, nama, nis });
                 this.save(); UI.renderStudents();
+            },
+
+            processEditStudent(id, nama, nis) {
+                const std = this.db.students.find(s => s.id === id);
+                if(std) {
+                    std.nama = nama;
+                    std.nis = nis;
+                    this.save();
+                    UI.renderStudents();
+                }
             },
 
             processBulkAddStudents(classId, studentsArray) {
@@ -472,6 +510,29 @@
             processDeleteStudent(id) {
                 this.db.students = this.db.students.filter(s => s.id !== id);
                 this.save(); UI.renderStudents();
+            },
+
+            processDeleteAllStudents(classId) {
+                const count = this.db.students.filter(s => s.classId === classId).length;
+                if(count === 0) return Swal.fire('Informasi', 'Tidak ada data siswa di kelas ini.', 'info');
+
+                Swal.fire({
+                    title: 'Hapus Seluruh Siswa?',
+                    text: `Apakah Anda yakin ingin menghapus seluruh ${count} siswa di kelas ini?`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#ef4444',
+                    cancelButtonColor: '#64748b',
+                    confirmButtonText: 'Ya, Hapus Semua',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        this.db.students = this.db.students.filter(s => s.classId !== classId);
+                        this.save();
+                        UI.renderStudents();
+                        Swal.fire('Sukses!', 'Seluruh data siswa kelas ini berhasil dihapus.', 'success');
+                    }
+                });
             },
 
             saveAttendance() {
@@ -532,7 +593,10 @@
                 document.getElementById('class-grid').innerHTML = Data.db.classes.map(c => {
                     const cnt = Data.db.students.filter(s => s.classId === c.id).length;
                     return `<div class="bg-white p-5 rounded-xl border border-slate-200 hover:shadow-md relative group transition-all">
-                        <button onclick="Security.verifyAction(() => Data.processDeleteClass('${c.id}'))" class="absolute top-3 right-3 text-red-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition"><i class="fa-solid fa-trash"></i></button>
+                        <div class="absolute top-3 right-3 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition">
+                            <button onclick="Security.verifyAction(() => UI.showEditClassModal('${c.id}'))" class="text-amber-500 hover:text-amber-700 p-1" title="Edit Kelas"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button onclick="Security.verifyAction(() => Data.processDeleteClass('${c.id}'))" class="text-red-400 hover:text-red-600 p-1" title="Hapus Kelas"><i class="fa-solid fa-trash"></i></button>
+                        </div>
                         <div class="flex items-center gap-4 mb-3">
                             <div class="w-12 h-12 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center font-bold text-lg">${c.nama.substring(0,2).toUpperCase()}</div>
                             <div><h3 class="font-bold text-slate-800">${c.nama}</h3><p class="text-xs text-slate-500">${c.wali}</p></div>
@@ -544,12 +608,32 @@
                     </div>`;
                 }).join('');
             },
+            
             async showAddClassModal() {
                 const { value } = await Swal.fire({
                     title: 'Halaman Tambah Kelas', html: '<input id="swal-nama" class="swal2-input" placeholder="Nama Kelas"><input id="swal-wali" class="swal2-input" placeholder="Nama Walikelas">',
                     showCancelButton: true, preConfirm: () => [document.getElementById('swal-nama').value, document.getElementById('swal-wali').value]
                 });
                 if(value && value[0]) { Data.processAddClass(value[0], value[1]); UI.populateSelects(); }
+            },
+
+            async showEditClassModal(id) {
+                const cls = Data.db.classes.find(c => c.id === id);
+                if(!cls) return;
+                const { value } = await Swal.fire({
+                    title: 'Edit Data Kelas',
+                    html: `
+                        <div class="text-left text-xs font-bold text-slate-500 mb-1 ml-1">Nama Kelas:</div>
+                        <input id="swal-edit-nama" class="swal2-input !mt-0 !mb-3" placeholder="Nama Kelas" value="${cls.nama}">
+                        <div class="text-left text-xs font-bold text-slate-500 mb-1 ml-1">Nama Walikelas:</div>
+                        <input id="swal-edit-wali" class="swal2-input !mt-0" placeholder="Nama Walikelas" value="${cls.wali}">
+                    `,
+                    showCancelButton: true,
+                    confirmButtonText: 'Simpan',
+                    cancelButtonText: 'Batal',
+                    preConfirm: () => [document.getElementById('swal-edit-nama').value, document.getElementById('swal-edit-wali').value]
+                });
+                if(value && value[0]) { Data.processEditClass(id, value[0], value[1]); }
             },
 
             // Student UI
@@ -569,8 +653,15 @@
                 const students = Data.db.students.filter(s => s.classId === this.activeClassId);
                 list.innerHTML = students.length ? students.map((s, i) => `
                     <tr class="hover:bg-slate-50 group">
-                        <td class="py-3 px-2">${i+1}</td><td class="py-3 font-mono text-slate-500">${s.nis}</td><td class="py-3 font-medium text-slate-700">${s.nama}</td>
-                        <td class="text-right"><button onclick="Security.verifyAction(() => Data.processDeleteStudent('${s.id}'))" class="text-red-300 hover:text-red-500 opacity-0 group-hover:opacity-100"><i class="fa-solid fa-trash"></i></button></td>
+                        <td class="py-3 px-2">${i+1}</td>
+                        <td class="py-3 font-mono text-slate-500">${s.nis}</td>
+                        <td class="py-3 font-medium text-slate-700">${s.nama}</td>
+                        <td class="text-right py-3 px-2">
+                            <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition">
+                                <button onclick="Security.verifyAction(() => UI.showEditStudentModal('${s.id}'))" class="text-amber-500 hover:text-amber-700 p-1" title="Edit Siswa"><i class="fa-solid fa-pen-to-square"></i></button>
+                                <button onclick="Security.verifyAction(() => Data.processDeleteStudent('${s.id}'))" class="text-red-400 hover:text-red-600 p-1" title="Hapus Siswa"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                        </td>
                     </tr>
                 `).join('') : '<tr><td colspan="4" class="text-center py-8 text-slate-400">Belum ada siswa</td></tr>';
             },
@@ -587,20 +678,12 @@
 
                 if (text) {
                     const newStudents = [];
-                    // Memecah baris per baris
                     text.split('\n').forEach(line => {
-                        if (!line.trim()) return; // Lewati baris kosong
-                        
-                        // Regex ini menangani Tab (Excel), Koma, Titik Koma, atau Pipa
+                        if (!line.trim()) return;
                         let parts = line.split(/[\t,;|]+/); 
-                        
                         if (parts.length >= 1) {
-                            // Hapus karakter aneh/spasi di awal & akhir
                             const nama = parts[0].trim();
-                            // Jika NIS tidak ada, isi strip
                             const nis = (parts[1] && parts[1].trim() !== "") ? parts[1].trim() : '-';
-                            
-                            // Validasi minimal nama harus ada
                             if(nama && nama.length > 1) {
                                 newStudents.push({ nama, nis });
                             }
@@ -608,7 +691,6 @@
                     });
 
                     if (newStudents.length > 0) {
-                        // PERBAIKAN DI SINI: Gunakan 'UI.activeClassId' bukan 'this.activeClassId'
                         Data.processBulkAddStudents(UI.activeClassId, newStudents);
                     } else {
                         Swal.fire('Gagal!', 'Tidak ada data yang terbaca. Pastikan format benar.', 'warning');
@@ -623,6 +705,25 @@
                     showCancelButton: true, preConfirm: () => [document.getElementById('swal-n').value, document.getElementById('swal-nis').value]
                 });
                 if(value && value[0]) Data.processAddStudent(UI.activeClassId, value[0], value[1]);
+            },
+
+            async showEditStudentModal(id) {
+                const std = Data.db.students.find(s => s.id === id);
+                if(!std) return;
+                const { value } = await Swal.fire({
+                    title: 'Edit Data Siswa',
+                    html: `
+                        <div class="text-left text-xs font-bold text-slate-500 mb-1 ml-1">Nama Lengkap:</div>
+                        <input id="swal-edit-sn" class="swal2-input !mt-0 !mb-3" placeholder="Nama Lengkap" value="${std.nama}">
+                        <div class="text-left text-xs font-bold text-slate-500 mb-1 ml-1">NISN:</div>
+                        <input id="swal-edit-snis" class="swal2-input !mt-0" placeholder="NISN" value="${std.nis}">
+                    `,
+                    showCancelButton: true,
+                    confirmButtonText: 'Simpan',
+                    cancelButtonText: 'Batal',
+                    preConfirm: () => [document.getElementById('swal-edit-sn').value, document.getElementById('swal-edit-snis').value]
+                });
+                if(value && value[0]) Data.processEditStudent(id, value[0], value[1]);
             },
 
             // Attendance & Grades UI
@@ -663,16 +764,86 @@
                 `).join('');
             },
 
+            // FITUR KOLEKTIF: Pop-up input nilai massal (Excel)
+            async showBulkGradeModal() {
+                const cid = document.getElementById('grade-class').value;
+                const title = document.getElementById('grade-title').value;
+
+                if (!cid) return Swal.fire('Perhatian', 'Pilih kelas terlebih dahulu.', 'warning');
+                
+                const students = Data.db.students.filter(s => s.classId === cid);
+                if (students.length === 0) return Swal.fire('Kosong', 'Tidak ada data siswa di kelas ini.', 'info');
+
+                // Ambil nilai yang saat ini terisi di form
+                const currentScores = [];
+                document.querySelectorAll('.grade-input').forEach(input => {
+                    currentScores.push(input.value || '');
+                });
+
+                const studentNamesListHtml = students.map((s, idx) => 
+                    `<div class="py-1 px-2 border-b border-slate-100 text-left text-xs font-medium text-slate-700 truncate hover:bg-slate-100">${idx + 1}. ${s.nama}</div>`
+                ).join('');
+
+                const { value: pastedText } = await Swal.fire({
+                    title: 'Impor Nilai',
+                    width: '650px',
+                    html: `
+                        <div class="text-left text-xs text-slate-500 mb-3">
+                            <b>Petunjuk:</b><br>- Ketik/tempel nilai pada kotak sebelah kanan.
+							<br>- Pastikan posisi nilai sejajar dengan nama siswa.
+                        </div>
+                        <div class="grid grid-cols-2 gap-3 text-left">
+                            <div>
+                                <label class="font-bold text-xs text-slate-700 mb-1 block">Daftar Siswa (${students.length}):</label>
+                                <div class="border border-slate-200 rounded-lg bg-slate-50 max-h-64 overflow-y-auto divide-y divide-slate-100">
+                                    ${studentNamesListHtml}
+                                </div>
+                            </div>
+                            <div>
+                                <label class="font-bold text-xs text-slate-700 mb-1 block">Daftar Nilai:</label>
+                                <textarea id="swal-bulk-scores" class="w-full h-64 p-2.5 border border-slate-300 rounded-lg text-xs font-mono outline-none focus:ring-2 focus:ring-indigo-500 leading-relaxed" placeholder="75&#10;80&#10;85&#10;90...">${currentScores.join('\n')}</textarea>
+                            </div>
+                        </div>
+                    `,
+                    showCancelButton: true,
+                    confirmButtonText: 'Impor',
+                    cancelButtonText: 'Batal',
+                    preConfirm: () => document.getElementById('swal-bulk-scores').value
+                });
+
+                if (pastedText !== undefined) {
+                    const lines = pastedText.split('\n');
+                    const inputs = document.querySelectorAll('.grade-input');
+                    inputs.forEach((input, index) => {
+                        if (lines[index] !== undefined) {
+                            const val = lines[index].trim();
+                            input.value = (val !== '' && !isNaN(val)) ? val : '';
+                        }
+                    });
+                    Swal.fire({ icon: 'success', title: 'Nilai berhasil diterapkan!', toast: true, position: 'top-end', showConfirmButton: false, timer: 1500 });
+                }
+            },
+
             // Rekap UI
             loadRekap() {
                 const cid = document.getElementById('rekap-class').value;
                 const info = document.getElementById('rekap-info');
+                const hint = document.getElementById('rekap-hint');
                 const cont = document.getElementById('rekap-container');
                 const head = document.querySelector('#rekap-table thead');
                 const body = document.querySelector('#rekap-table tbody');
 
-                if(!cid) { info.classList.add('hidden'); cont.classList.add('hidden'); return; }
-                info.classList.remove('hidden'); cont.classList.remove('hidden');
+                if(!cid) { 
+                    info.classList.add('hidden'); 
+                    hint.classList.add('hidden');
+                    cont.classList.add('hidden'); 
+                    return; 
+                }
+
+                info.classList.remove('hidden'); 
+                hint.classList.remove('hidden');
+                cont.classList.remove('hidden');
+
                 const cls = Data.db.classes.find(c => c.id === cid);
                 const stds = Data.db.students.filter(s => s.classId === cid);
                 const grds = Data.db.grades.filter(g => g.classId === cid);
@@ -684,26 +855,196 @@
                 h1 += `<th rowspan="2" class="p-3 border text-center">Rerata</th></tr>`;
                 
                 let h2 = `<tr class="text-xs bg-slate-50"><th class="p-1 border text-center">H</th><th class="p-1 border text-center">S</th><th class="p-1 border text-center">I</th><th class="p-1 border text-center">A</th>`;
-                grds.forEach(g => h2 += `<th class="p-1 border text-center whitespace-nowrap" title="${g.title}">${g.title}<br><span class="text-[9px]">${g.type}</span></th>`);
+                
+                // HEADER NIKAI EDITABLE
+                grds.forEach(g => {
+                    h2 += `<th class="p-2 border text-center whitespace-nowrap cursor-pointer hover:bg-slate-200 group/hdr transition" title="Klik untuk edit/hapus judul materi" onclick="Security.verifyAction(() => UI.editGradeHeader('${cid}', '${g.title}', '${g.type}'))">
+                        <div class="flex items-center justify-center gap-1 font-semibold text-slate-700">
+                            <span>${g.title}</span>
+                            <i class="fa-solid fa-pen text-[10px] opacity-0 group-hover/hdr:opacity-100 text-amber-600"></i>
+                        </div>
+                        <span class="text-[9px] text-slate-500 font-normal">(${g.type})</span>
+                    </th>`;
+                });
                 h2 += `</tr>`;
                 head.innerHTML = h1 + h2;
 
                 body.innerHTML = stds.map((s, i) => {
                     let h=0, sk=0, iz=0, al=0;
                     Data.db.attendance.filter(a => a.classId === cid).forEach(a => { const v = a.records[s.id]; if(v==='H') h++; if(v==='S') sk++; if(v==='I') iz++; if(v==='A') al++; });
+                    
                     let tot=0, cnt=0, cols='';
-                    grds.forEach(g => { const val = g.records[s.id] || 0; if(val>0) { tot+=parseFloat(val); cnt++; } cols += `<td class="p-3 border text-center ${val<75 && val>0 ? 'text-red-500 font-bold':''}">${val||'-'}</td>`; });
-                    return `<tr class="hover:bg-slate-50"><td class="p-3 border text-center text-slate-500">${i+1}</td><td class="p-3 border font-medium">${s.nama}</td><td class="p-3 border text-center font-bold text-emerald-600 bg-emerald-50/30">${h}</td><td class="p-3 border text-center text-amber-600">${sk}</td><td class="p-3 border text-center text-blue-600">${iz}</td><td class="p-3 border text-center text-red-600">${al}</td>${cols}<td class="p-3 border text-center font-bold bg-slate-50">${cnt ? (tot/cnt).toFixed(1) : 0}</td></tr>`;
+                    grds.forEach(g => { 
+                        const val = g.records[s.id] || 0; 
+                        if(val>0) { tot+=parseFloat(val); cnt++; } 
+                        
+                        // ITEM NILAI EDITABLE
+                        cols += `<td class="p-3 border text-center cursor-pointer hover:bg-amber-50 group/val transition ${val<75 && val>0 ? 'text-red-500 font-bold':''}" title="Klik untuk edit nilai" onclick="Security.verifyAction(() => UI.editSingleGrade('${cid}', '${g.title}', '${g.type}', '${s.id}', '${s.nama}', '${val}'))">
+                            <span>${val||'-'}</span>
+                            <i class="fa-solid fa-pen text-[9px] opacity-0 group-hover/val:opacity-100 text-amber-600 ml-1"></i>
+                        </td>`; 
+                    });
+
+                    // ITEM ABSENSI EDITABLE (H, S, I, A)
+                    return `<tr class="hover:bg-slate-50">
+                        <td class="p-3 border text-center text-slate-500">${i+1}</td>
+                        <td class="p-3 border font-medium">${s.nama}</td>
+                        <td class="p-3 border text-center font-bold text-emerald-600 bg-emerald-50/30 cursor-pointer hover:bg-emerald-100" title="Klik untuk ubah jumlah Hadir" onclick="Security.verifyAction(() => UI.editSingleAttendance('${cid}', '${s.id}', '${s.nama}', 'H'))">${h}</td>
+                        <td class="p-3 border text-center text-amber-600 cursor-pointer hover:bg-amber-100" title="Klik untuk ubah jumlah Sakit" onclick="Security.verifyAction(() => UI.editSingleAttendance('${cid}', '${s.id}', '${s.nama}', 'S'))">${sk}</td>
+                        <td class="p-3 border text-center text-blue-600 cursor-pointer hover:bg-blue-100" title="Klik untuk ubah jumlah Izin" onclick="Security.verifyAction(() => UI.editSingleAttendance('${cid}', '${s.id}', '${s.nama}', 'I'))">${iz}</td>
+                        <td class="p-3 border text-center text-red-600 cursor-pointer hover:bg-red-100" title="Klik untuk ubah jumlah Alpa" onclick="Security.verifyAction(() => UI.editSingleAttendance('${cid}', '${s.id}', '${s.nama}', 'A'))">${al}</td>
+                        ${cols}
+                        <td class="p-3 border text-center font-bold bg-slate-50">${cnt ? (tot/cnt).toFixed(1) : 0}</td>
+                    </tr>`;
                 }).join('');
+            },
+
+            // EDIT ITEM REKAPITULASI: Judul Materi / Jenis
+            async editGradeHeader(classId, oldTitle, oldType) {
+                const result = await Swal.fire({
+                    title: 'Penilaian',
+                    html: `
+                        <div class="text-left text-xs font-bold text-slate-500 mb-1 ml-1">Jenis Penilaian:</div>
+                        <select id="swal-edit-gtype" class="swal2-select !w-full !m-0 mb-3">
+                            <option value="AF" ${oldType==='AF'?'selected':''}>Ulangan/Tugas/Praktik (AF)</option>
+                            <option value="ATS" ${oldType==='ATS'?'selected':''}>Asesmen Tengah Semester (ATS)</option>
+                            <option value="AAS" ${oldType==='AAS'?'selected':''}>Asesmen Akhir Semester (AAS)</option>
+                        </select>
+                        <div class="text-left text-xs font-bold text-slate-500 mb-1 ml-1">Judul Penilaian:</div>
+                        <input id="swal-edit-gtitle" class="swal2-input !w-full !m-0" value="${oldTitle}">
+                    `,
+                    showDenyButton: true,
+                    showCancelButton: true,
+                    confirmButtonText: 'Simpan',
+                    denyButtonText: 'Hapus',
+                    denyButtonColor: '#ef4444',
+                    cancelButtonText: 'Batal',
+                    preConfirm: () => [
+                        document.getElementById('swal-edit-gtype').value,
+                        document.getElementById('swal-edit-gtitle').value
+                    ]
+                });
+
+                if (result.isConfirmed && result.value) {
+                    const [newType, newTitle] = result.value;
+                    if (!newTitle.trim()) return Swal.fire('Gagal', 'Judul tidak boleh kosong.', 'warning');
+                    
+                    const gIdx = Data.db.grades.findIndex(g => g.classId === classId && g.title === oldTitle && g.type === oldType);
+                    if (gIdx >= 0) {
+                        Data.db.grades[gIdx].title = newTitle;
+                        Data.db.grades[gIdx].type = newType;
+                        Data.save();
+                        UI.loadRekap();
+                    }
+                } else if (result.isDenied) {
+                    Data.db.grades = Data.db.grades.filter(g => !(g.classId === classId && g.title === oldTitle && g.type === oldType));
+                    Data.save();
+                    UI.loadRekap();
+                    Swal.fire('Terhapus', 'Kolom penilaian berhasil dihapus.', 'success');
+                }
+            },
+
+            // EDIT ITEM REKAPITULASI: Nilai Tunggal
+            async editSingleGrade(classId, title, type, studentId, studentName, currentVal) {
+                const { value: newScore } = await Swal.fire({
+                    title: `${studentName}`,
+                    input: 'number',
+                    inputLabel: `Nilai:`,
+                    inputValue: (currentVal !== '0' && currentVal !== '-') ? currentVal : '',
+                    inputPlaceholder: 'Masukkan nilai (0-100)!',
+                    showCancelButton: true,
+                    confirmButtonText: 'Simpan',
+                    cancelButtonText: 'Batal',
+                    inputValidator: (value) => {
+                        if (value && (isNaN(value) || value < 0 || value > 100)) {
+                            return 'Nilai harus berupa angka antara 0-100!';
+                        }
+                    }
+                });
+
+                if (newScore !== undefined) {
+                    const gIdx = Data.db.grades.findIndex(g => g.classId === classId && g.title === title && g.type === type);
+                    if (gIdx >= 0) {
+                        if (newScore === '' || newScore === null) {
+                            delete Data.db.grades[gIdx].records[studentId];
+                        } else {
+                            Data.db.grades[gIdx].records[studentId] = parseFloat(newScore);
+                        }
+                        Data.save();
+                        UI.loadRekap();
+                    }
+                }
+            },
+
+            // EDIT ITEM REKAPITULASI: Absensi Tunggal (H, S, I, A)
+            async editSingleAttendance(classId, studentId, studentName, status) {
+                const statusMap = { 'H': 'Hadir', 'S': 'Sakit', 'I': 'Izin', 'A': 'Alpa' };
+                const classAtt = Data.db.attendance.filter(a => a.classId === classId);
+                let currentCount = 0;
+                classAtt.forEach(a => {
+                    if (a.records[studentId] === status) currentCount++;
+                });
+
+                const { value: newCountStr } = await Swal.fire({
+                    title: `${studentName}`,
+                    input: 'number',
+                    inputLabel: `Jumlah ${statusMap[status]}:`,
+                    inputValue: currentCount,
+                    showCancelButton: true,
+                    confirmButtonText: 'Simpan',
+                    cancelButtonText: 'Batal',
+                    inputValidator: (val) => {
+                        if (val === '' || val < 0) return 'Jumlah tidak boleh minus atau kosong!';
+                    }
+                });
+
+                if (newCountStr !== undefined) {
+                    const newCount = parseInt(newCountStr, 10);
+                    let diff = newCount - currentCount;
+
+                    if (diff > 0) {
+                        for (let a of classAtt) {
+                            if (diff <= 0) break;
+                            if (a.records[studentId] && a.records[studentId] !== status) {
+                                a.records[studentId] = status;
+                                diff--;
+                            }
+                        }
+                        while (diff > 0) {
+                            const dummyDate = new Date(Date.now() - (diff * 86400000)).toISOString().split('T')[0];
+                            let attRec = Data.db.attendance.find(a => a.classId === classId && a.date === dummyDate);
+                            if (!attRec) {
+                                attRec = { classId, date: dummyDate, records: {} };
+                                Data.db.attendance.push(attRec);
+                            }
+                            attRec.records[studentId] = status;
+                            diff--;
+                        }
+                    } else if (diff < 0) {
+                        for (let a of classAtt) {
+                            if (diff >= 0) break;
+                            if (a.records[studentId] === status) {
+                                if (status === 'H') {
+                                    delete a.records[studentId];
+                                } else {
+                                    a.records[studentId] = 'H';
+                                }
+                                diff++;
+                            }
+                        }
+                    }
+
+                    Data.save();
+                    UI.loadRekap();
+                }
             }
         };
 		
-		// --- STUDENT PORTAL CONTROLLER (VERSI FINAL - FIX MANUAL INPUT) ---
+		// --- STUDENT PORTAL CONTROLLER ---
         const StudentPortal = {
             dataLoaded: false,
 
             async init() {
-                // 1. Verifikasi Kode Akses
                 const { value: code } = await Swal.fire({
                     title: 'Halaman Verifikasi',
                     input: 'password',
@@ -719,7 +1060,6 @@
                     document.getElementById('student-search-screen').classList.remove('hidden');
                     this.loadDataSource(); 
                 } else if (code) {
-                    // Pesan Error jika salah
                     Swal.fire('Akses Ditolak', '• pastikan kode akses yang dimasukkan benar •', 'error');
                 }
             },
@@ -732,13 +1072,11 @@
             async loadDataSource() {
                 const mode = document.querySelector('input[name="stu-storage"]:checked').value;
                 const classSelect = document.getElementById('stu-class');
-                const nameInput = document.getElementById('stu-name-text'); // <-- SUDAH DIPERBAIKI (ID BARU)
+                const nameInput = document.getElementById('stu-name-text');
                 
-                // UI Loading state
                 classSelect.innerHTML = '<option>Memuat data...</option>';
                 classSelect.disabled = true;
                 
-                // Reset Input Nama (Versi Input Text)
                 if (nameInput) {
                     nameInput.value = '';
                     nameInput.disabled = true;
@@ -754,7 +1092,6 @@
                     document.getElementById('loading-overlay').classList.add('hidden');
                     this.dataLoaded = true;
 
-                    // Populate Kelas
                     const classes = Data.db.classes || [];
                     if (classes.length > 0) {
                         classSelect.innerHTML = '<option value="">-- pilih kelas --</option>' + 
@@ -764,11 +1101,10 @@
                         classSelect.innerHTML = '<option>-- tidak ada data --</option>';
                     }
 
-                    // Kembalikan placeholder nama
                     if (nameInput) nameInput.placeholder = "-- kelas belum dipilih --";
 
                 } catch (e) {
-                    console.error(e); // Untuk debugging
+                    console.error(e);
                     document.getElementById('loading-overlay').classList.add('hidden');
                     Swal.fire('Gagal Memuat!', '• jika memilih Cloud, pastikan perangkat terhubung ke jaringan internet •', 'error');
                     classSelect.innerHTML = '<option>Gagal Memuat</option>';
@@ -795,11 +1131,9 @@
                 const classId = document.getElementById('stu-class').value;
                 const nameInputRaw = document.getElementById('stu-name-text').value;
 
-                // Validasi
                 if (!classId) return Swal.fire('Pilih Kelas', 'Silakan pilih kelas terlebih dahulu.', 'warning');
                 if (!nameInputRaw || nameInputRaw.length < 3) return Swal.fire('Nama Kurang Lengkap', 'Masukkan minimal 3 huruf nama Anda.', 'warning');
 
-                // Logika Pencarian Nama
                 const studentsInClass = Data.db.students.filter(s => s.classId === classId);
                 const searchKeyword = nameInputRaw.toLowerCase();
                 const matchedStudents = studentsInClass.filter(s => s.nama.toLowerCase().includes(searchKeyword));
@@ -812,21 +1146,17 @@
                     return Swal.fire('Terlalu Umum!', `• ditemukan ${matchedStudents.length} siswa dengan nama "${nameInputRaw}", silakan ketik nama yang lebih lengkap •`, 'info');
                 }
 
-                // Siswa Ditemukan
                 const student = matchedStudents[0];
                 const studentId = student.id;
 
-                // Ambil Data Lainnya
                 const cls = Data.db.classes.find(c => c.id === classId);
                 const attendance = Data.db.attendance.filter(a => a.classId === classId);
                 const grades = Data.db.grades.filter(g => g.classId === classId);
 
-                // Render Header
                 document.getElementById('res-nama').innerText = student.nama;
                 document.getElementById('res-nis').innerText = `NISN: ${student.nis}`;
                 document.getElementById('res-kelas').innerText = `${cls.nama}`;
 
-                // Render Absensi
                 let counts = { H: 0, S: 0, I: 0, A: 0 };
                 attendance.forEach(a => {
                     const status = a.records[studentId];
@@ -838,7 +1168,6 @@
                 document.getElementById('res-i').innerText = counts.I;
                 document.getElementById('res-a').innerText = counts.A;
 
-                // Render Nilai
                 const tbody = document.getElementById('res-grade-list');
                 if (grades.length === 0) {
                     tbody.innerHTML = '<tr><td colspan="3" class="p-4 text-center text-slate-400"><i>- belum ada data -</i></td></tr>';
@@ -886,66 +1215,59 @@
         };
 
         const Export = {
-        excel() {
-            const t = document.getElementById('rekap-table');
-            if(t.rows.length <= 2) return Swal.fire('Kosong', 'Tidak ada data', 'warning');
-            
-            // Nama file dinamis
-            const classId = document.getElementById('rekap-class').value;
-            const cls = Data.db.classes.find(c => c.id === classId);
-            const fileName = cls ? `Rekapitulasi_Absensi_dan_Nilai_${cls.nama}.xlsx` : `Rekap_Nilai.xlsx`;
-            
-            XLSX.writeFile(XLSX.utils.table_to_book(t), fileName);
-        },
+            excel() {
+                const t = document.getElementById('rekap-table');
+                if(t.rows.length <= 2) return Swal.fire('Kosong', 'Tidak ada data', 'warning');
+                
+                const classId = document.getElementById('rekap-class').value;
+                const cls = Data.db.classes.find(c => c.id === classId);
+                const fileName = cls ? `Rekapitulasi_Absensi_dan_Nilai_${cls.nama}.xlsx` : `Rekap_Nilai.xlsx`;
+                
+                XLSX.writeFile(XLSX.utils.table_to_book(t), fileName);
+            },
 
-        pdf() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF('l', 'mm', 'a4'); // Landscape
+            pdf() {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF('l', 'mm', 'a4');
 
-            // 1. Ambil Data Kelas & Wali Kelas
-            const classId = document.getElementById('rekap-class').value;
-            const cls = Data.db.classes.find(c => c.id === classId);
-            
-            const className = cls ? cls.nama : 'Sekolah';
-            const waliName = cls ? cls.wali : '-';
+                const classId = document.getElementById('rekap-class').value;
+                const cls = Data.db.classes.find(c => c.id === classId);
+                
+                const className = cls ? cls.nama : 'Sekolah';
+                const waliName = cls ? cls.wali : '-';
 
-            // 2. Tulis Judul & Identitas
-            doc.setFont("helvetica", "bold");
-            doc.setFontSize(14);
-            doc.text(`REKAPITULASI ABSENSI DAN NILAI ${className.toUpperCase()}`, 14, 15);
+                doc.setFont("helvetica", "bold");
+                doc.setFontSize(14);
+                doc.text(`REKAPITULASI ABSENSI DAN NILAI ${className.toUpperCase()}`, 14, 15);
 
-            doc.setFont("helvetica", "normal");
-            doc.setFontSize(12);
-            doc.text(`Wali Kelas: ${waliName}`, 14, 22); // Menampilkan Wali Kelas
+                doc.setFont("helvetica", "normal");
+                doc.setFontSize(12);
+                doc.text(`Wali Kelas: ${waliName}`, 14, 22);
 
-            // 3. Generate Tabel dengan Rata Tengah
-            doc.autoTable({
-                html: '#rekap-table',
-                startY: 28, // Geser ke bawah sedikit agar tidak menumpuk dengan teks Wali Kelas
-                theme: 'grid',
-                styles: { 
-                    fontSize: 10,
-                    cellPadding: 2,
-                    halign: 'center', // <-- INI YANG MEMBUAT RATA TENGAH (Horizontal)
-                    valign: 'middle'  // <-- Rata tengah secara Vertikal
-                },
-                headStyles: {
-                    halign: 'center', // Header juga rata tengah
-                    valign: 'middle',
-                    fillColor: [63, 81, 181], // Warna Header Biru (Opsional)
-                    textColor: 255
-                },
-        
-				columnStyles: {
-					1: { halign: 'left' } 
-				}
-            });
+                doc.autoTable({
+                    html: '#rekap-table',
+                    startY: 28,
+                    theme: 'grid',
+                    styles: { 
+                        fontSize: 10,
+                        cellPadding: 2,
+                        halign: 'center',
+                        valign: 'middle'
+                    },
+                    headStyles: {
+                        halign: 'center',
+                        valign: 'middle',
+                        fillColor: [63, 81, 181],
+                        textColor: 255
+                    },
+                    columnStyles: {
+                        1: { halign: 'left' } 
+                    }
+                });
 
-            doc.save(`Rekapitulasi_Absensi_dan_Nilai_${className}.pdf`);
-        }
-    };
+                doc.save(`Rekapitulasi_Absensi_dan_Nilai_${className}.pdf`);
+            }
+        };
     </script>
 </body>
-
 </html>
-
