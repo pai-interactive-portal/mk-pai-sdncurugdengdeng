@@ -280,7 +280,7 @@
                                 <i class="fa-solid fa-user-plus mr-1"></i> Tambah Data Siswa
                             </button>
                             <button onclick="Security.verifyAction(() => Data.processDeleteAllStudents(UI.activeClassId))" class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg text-sm font-medium shadow-lg shadow-red-500/30">
-                                <i class="fa-solid fa-trash-can mr-1"></i> Hapus Semua Siswa
+                                <i class="fa-solid fa-trash-can mr-1"></i> Hapus Data Siswa
                             </button>
                         </div>
                     </div>
@@ -517,13 +517,13 @@
                 if(count === 0) return Swal.fire('Informasi', 'Tidak ada data siswa di kelas ini.', 'info');
 
                 Swal.fire({
-                    title: 'Hapus Seluruh Siswa?',
-                    text: `Apakah Anda yakin ingin menghapus seluruh ${count} siswa di kelas ini?`,
+                    title: 'Halaman Hapus Data',
+                    text: `Yakin ingin menghapus ${count} siswa di kelas ini?`,
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#ef4444',
                     cancelButtonColor: '#64748b',
-                    confirmButtonText: 'Ya, Hapus Semua',
+                    confirmButtonText: 'Hapus',
                     cancelButtonText: 'Batal'
                 }).then((result) => {
                     if (result.isConfirmed) {
@@ -663,7 +663,7 @@
                             </div>
                         </td>
                     </tr>
-                `).join('') : '<tr><td colspan="4" class="text-center py-8 text-slate-400">Belum ada siswa</td></tr>';
+                `).join('') : '<tr><td colspan="4" class="text-center py-8 text-slate-400">• belum ada data siswa •</td></tr>';
             },
             async showBulkAddStudentModal() {
                 const { value: text } = await Swal.fire({
